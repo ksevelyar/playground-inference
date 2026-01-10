@@ -5,3 +5,9 @@
 cd comfy
 nix run .
 ```
+
+## Ollama
+```
+cd ollama
+nix run .
+```

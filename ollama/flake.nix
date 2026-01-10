@@ -1,5 +1,5 @@
 {
-  description = "On-demand Ollama (ROCm) + Open WebUI (nixos-25.11)";
+  description = "Ollama + Open WebUI";
 
   inputs.nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
 
