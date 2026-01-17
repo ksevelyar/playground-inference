@@ -12,6 +12,8 @@
         stdenv.cc.cc
         zlib
         zstd
+        libglvnd
+        glib
       ]);
 
       app = pkgs.writeTextFile {
@@ -28,7 +30,7 @@
 
           TORCH_INDEX_URL="''${TORCH_INDEX_URL:-https://download.pytorch.org/whl/nightly/rocm7.0}"
 
-          export LD_LIBRARY_PATH="${ldPath}"
+          export LD_LIBRARY_PATH="${ldPath}''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 
           if [ ! -d "$REPO_DIR/.git" ]; then
             git clone --depth=1 https://github.com/comfyanonymous/ComfyUI.git "$REPO_DIR"
@@ -39,7 +41,7 @@
           fi
 
           "$VENV_DIR/bin/python" -m pip install -U pip wheel setuptools
-          "$VENV_DIR/bin/python" -m pip install -U --pre torch torchvision torchaudio --index-url "$TORCH_INDEX_URL"
+          "$VENV_DIR/bin/python" -m pip install torch torchvision torchaudio --index-url "$TORCH_INDEX_URL"
           "$VENV_DIR/bin/python" -m pip install -U -r "$REPO_DIR/requirements.txt"
           "$VENV_DIR/bin/python" -m pip install -U -r "$REPO_DIR/manager_requirements.txt"
 
