@@ -22,6 +22,8 @@
 
         export OLLAMA_HOST="127.0.0.1:11434"
         export OLLAMA_MODELS="$PWD/ollama-models"
+        export OLLAMA_MAX_LOADED_MODELS=1
+        export OLLAMA_NUM_PARALLEL=1
         export DATA_DIR="$PWD/open-webui-data"
 
         mkdir -p "$OLLAMA_MODELS" "$DATA_DIR"
@@ -42,8 +44,6 @@
         shellHook = ''
           export OLLAMA_HOST="127.0.0.1:11434"
           export OLLAMA_MODELS="$PWD/ollama-models"
-          export OLLAMA_NUM_CTX=32768
-          mkdir -p "$OLLAMA_MODELS"
         '';
       };
     };
