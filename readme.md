@@ -9,5 +9,5 @@ nix run .
 ## Ollama
 ```
 cd ollama
-nix run .
+nix develop
 ```
