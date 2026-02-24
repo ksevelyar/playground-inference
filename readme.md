@@ -1,5 +1,7 @@
 # Playground Inference
 
+![](hope.jpg)
+
 ## Comfy
 ```
 cd comfy
