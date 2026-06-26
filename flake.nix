@@ -17,7 +17,7 @@
     modelsDir = "./downloads/models";
 
     gpuOpts = "--n-gpu-layers 999 --flash-attn on --split-mode none --main-gpu 0";
-    samplingOpts = "--temp 0.6 --top-k 20 --top-p 0.95";
+    samplingOpts = "--temp 0.6 --top-k 20";
 
     rocm-server = pkgs.writeShellApplication {
       name = "rocm-server";
@@ -25,8 +25,7 @@
       text = ''
         exec llama-server \
           --model "${modelsDir}/$MODEL" \
-          --host 0.0.0.0 --port 8080 \
-          --jinja \
+          --host 0.0.0.0 \
           ${gpuOpts} ${samplingOpts} \
           --parallel 1 --ctx-size 16384
       '';
@@ -38,8 +37,7 @@
       text = ''
         exec llama-server \
           --model "${modelsDir}/$MODEL" \
-          --host 0.0.0.0 --port 8080 \
-          --jinja \
+          --host 0.0.0.0 \
           ${samplingOpts} --ctx-size 8192
       '';
     };
@@ -62,23 +60,15 @@
         echo "=== Benchmark: $(basename "$MODEL_PATH") ==="
         timeout 120 \
           llama-bench \
-            -m "$MODEL_PATH" ${gpuOpts} -p 512 -n 128 -r 3 -o md
-      '';
-    };
-
-    llama-completion = pkgs.writeShellApplication {
-      name = "llama-completion";
-      runtimeInputs = [ pkgs.llama-cpp-rocm ];
-      text = ''
-        exec llama-completion \
-          ${gpuOpts} ${samplingOpts} \
-          "$@"
+            --model "$MODEL_PATH" \
+            --n-gpu-layers 999 --flash-attn 1 --split-mode none --main-gpu 0 \
+            --n-prompt 512 --n-gen 128 --repetitions 3 --output md
       '';
     };
 
     benchmark-prompt = pkgs.writeShellApplication {
       name = "benchmark-prompt";
-      runtimeInputs = [ llama-completion ];
+      runtimeInputs = [ pkgs.llama-cpp-rocm ];
       text = ''
         PROMPT_NAME="''${1:?Usage: benchmark-prompt <prompt-name>}"
         PROMPT_FILE="''${PROMPT_FILE:-./prompts/$PROMPT_NAME.md}"
@@ -94,12 +84,42 @@
         fi
 
         llama-completion \
+          ${gpuOpts} ${samplingOpts} \
           --model "$MODEL_PATH" \
           --ctx-size 16384 \
           --single-turn --simple-io --no-display-prompt \
           --prompt "$(cat "$PROMPT_FILE")" > "$out"
 
         echo "Wrote $out"
+      '';
+    };
+
+    oneshot = pkgs.writeShellApplication {
+      name = "oneshot";
+      runtimeInputs = [ pkgs.llama-cpp-rocm ];
+      text = ''
+        PROMPT="''${1:?Usage: oneshot <prompt>}"
+        MODEL_PATH="${modelsDir}/$MODEL"
+        llama-completion \
+          ${gpuOpts} ${samplingOpts} \
+          --model "$MODEL_PATH" \
+          --ctx-size 16384 \
+          --log-disable \
+          --single-turn --no-display-prompt \
+          --prompt "$PROMPT"
+      '';
+    };
+
+    chat = pkgs.writeShellApplication {
+      name = "chat";
+      runtimeInputs = [ pkgs.llama-cpp-rocm ];
+      text = ''
+        PROMPT="''${1:?Usage: chat <prompt>}"
+        MODEL_PATH="${modelsDir}/$MODEL"
+        exec llama-cli \
+          --model "$MODEL_PATH" \
+          --prompt "$PROMPT" \
+          ${gpuOpts} ${samplingOpts} --ctx-size 16384
       '';
     };
   in {
@@ -109,8 +129,9 @@
         cpu-server
         download-model
         benchmark-model
-        llama-completion
         benchmark-prompt
+        oneshot
+        chat
       ];
 
       MODEL = "Qwen3.6-27B-Q3_K_M.gguf";
