@@ -18,6 +18,7 @@ nvim ~/.config/opencode.json
 ```json
 {
   "$schema": "https://opencode.ai/config.json",
+  "default_agent": "plan",
   "provider": {
     "llama.cpp": {
       "npm": "@ai-sdk/openai-compatible",
