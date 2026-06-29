@@ -1,19 +1,18 @@
 # Playground Inference
+
+## Text Generation
 [llama.cpp](https://github.com/ggml-org/llama.cpp) server tuned for agentic flow on AMD Radeon RX 9060 XT 16GB
 
-## Quick start
 ### Run Server
 ```
 nix develop
 
-download-model https://huggingface.co/unsloth/Qwen3.6-27B-MTP-GGUF/resolve/main/Qwen3.6-27B-Q3_K_M.gguf
-
-MODEL=Qwen3.6-27B-Q3_K_M.gguf rocm-server
+MODEL=Qwen3.6-27B-Q3_K_M rocm-server
 ```
 
 ### Connect opencode or other agent using `http://127.0.0.1:8080/v1`
 ```
-nvim ~/.config/opencode.json
+nvim ~/.config/opencode/opencode.jsonc
 ```
 ```json
 {
@@ -41,3 +40,11 @@ nvim ~/.config/opencode.json
 ```
 
 [![opencode](doc/opencode.png)](https://github.com/anomalyco/opencode)
+
+## Image Generation
+```
+nix develop
+
+SD_MODEL=Krea2-Turbo generate "Top-down view pixel art retro Asteroids game spaceship sprite"
+```
+![krea2](graphics/output/krea2-turbo/2026-06-28_22-04-58-asteroids.png)

@@ -1,3 +1,7 @@
-/downloads
 .direnv
 result
+
+text/models
+graphics/models
+graphics/output
+log/
