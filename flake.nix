@@ -24,8 +24,8 @@
     devShells.${system}.default = pkgs.mkShell {
       packages = llama.commands ++ stable-diffusion.commands;
 
-      MODEL = "Qwen3.8-27B-UD-IQ3_S";
-      SD_MODEL = "PixelArt-XL";
+      MODEL = "Qwen3.8-27B-UD-Q3_K_XL";
+      SD_MODEL = "Krea2-Turbo";
     };
   };
 }
