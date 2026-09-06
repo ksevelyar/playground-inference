@@ -3,7 +3,6 @@
 # DDR5 32 GB RAM
 {
   description = "llama.cpp + stable-diffusion.cpp";
-
   inputs.nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
   outputs = {
