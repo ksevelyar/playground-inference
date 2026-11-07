@@ -17,6 +17,7 @@ in {
           --models-preset ${modelsIni} \
           --models-max 1 \
           --host 0.0.0.0 \
+          --port 8080 \
           --parallel 1 \
           --log-file "./log/router.log"
       '';
